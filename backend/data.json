@@ -1,0 +1,52 @@
+[
+  {
+    "title": "JavaScript Basics",
+    "content": "Learn the basics of JavaScript including variables, functions, arrays, objects, and loops. This is a gentle introduction for beginners.",
+    "url": "https://example.com/js-basics"
+  },
+  {
+    "title": "Deep Dive into Functions",
+    "content": "Understand function declarations, expressions, arrow functions, closures, and higher-order functions in JavaScript.",
+    "url": "https://example.com/js-functions"
+  },
+  {
+    "title": "Node.js Guide",
+    "content": "A comprehensive guide to Node.js backend development: modules, HTTP servers, Express, middleware, and routing.",
+    "url": "https://example.com/node-guide"
+  },
+  {
+    "title": "MongoDB Tutorial",
+    "content": "How to use MongoDB with Node.js for modern web apps. Covers CRUD operations, indexes, aggregation, and schema design.",
+    "url": "https://example.com/mongodb-tutorial"
+  },
+  {
+    "title": "Asynchronous JavaScript",
+    "content": "Promises, async/await, event loop, microtasks, and practical patterns for handling asynchronous operations.",
+    "url": "https://example.com/async-js"
+  },
+  {
+    "title": "Express.js in Practice",
+    "content": "Learn Express.js by building APIs, handling requests, validating input, and structuring projects.",
+    "url": "https://example.com/express-practice"
+  },
+  {
+    "title": "Frontend Performance",
+    "content": "Tips and techniques for optimizing web performance: bundling, code splitting, caching, and critical rendering path.",
+    "url": "https://example.com/frontend-performance"
+  },
+  {
+    "title": "CSS Layouts",
+    "content": "Master modern CSS layouts with Flexbox and Grid, responsive design strategies, and best practices.",
+    "url": "https://example.com/css-layouts"
+  },
+  {
+    "title": "TypeScript for JS Devs",
+    "content": "Add types to your JavaScript with TypeScript. Learn interfaces, generics, unions, and configuration.",
+    "url": "https://example.com/typescript"
+  },
+  {
+    "title": "REST vs GraphQL",
+    "content": "Compare REST and GraphQL APIs, schema design, resolvers, and performance considerations.",
+    "url": "https://example.com/rest-vs-graphql"
+  }
+]
