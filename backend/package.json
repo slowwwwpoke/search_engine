@@ -1,17 +1,16 @@
 {
-  "name": "mini-search-engine",
+  "name": "search-engine-backend",
   "version": "1.0.0",
-  "description": "Simple full-stack search engine (Express + MongoDB + HTML/JS frontend)",
-  "main": "server.js",
   "type": "module",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "cheerio": "^1.1.2",
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "mongoose": "^8.17.1",
-    "node-fetch": "^3.3.2"
+    "express": "^4.18.2",
+    "mongoose": "^7.0.4",
+    "node-fetch": "^3.3.2",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5"
   }
 }
