@@ -1,28 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JS Search Engine</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Search Engine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #0078d7;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    main {
+      padding: 2rem;
+      max-width: 700px;
+      margin: auto;
+    }
+    .search-box {
+      display: flex;
+      gap: 10px;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      font-size: 1rem;
+    }
+    button {
+      padding: 10px 15px;
+      background: #0078d7;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005a9e;
+    }
+    .results {
+      margin-top: 2rem;
+    }
+    .result {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .result a {
+      font-weight: bold;
+      color: #0078d7;
+      text-decoration: none;
+    }
+    .result a:hover {
+      text-decoration: underline;
+    }
+    .backlinks {
+      font-size: 0.9rem;
+      color: #555;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h1>JS Search Engine</h1>
-  <form id="searchForm">
-    <input type="text" id="searchBox" placeholder="Search..." autocomplete="off">
-    <select id="limit">
-      <option value="5">5</option>
-      <option value="10" selected>10</option>
-      <option value="20">20</option>
-    </select>
-    <button type="submit">Search</button>
-    <div id="suggestions" class="suggestions"></div>
-  </form>
-  <div id="meta"></div>
-  <div id="results"></div>
-  <div id="pagination"></div>
-</div>
-<script type="module" src="script.js"></script>
+  <header>
+    <h1>🌐 Mini Search Engine</h1>
+  </header>
+  <main>
+    <div class="search-box">
+      <input id="query" type="text" placeholder="Search for something..." />
+      <button onclick="search()">Search</button>
+    </div>
+    <div id="results" class="results"></div>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
