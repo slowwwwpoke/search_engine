@@ -1,4 +1,4 @@
-const API_URL = "https://your-backend.onrender.com";
+const API_URL = "https://search-engine-gc3w.onrender.com";
 
 async function search() {
   const query = document.getElementById("query").value.trim();
