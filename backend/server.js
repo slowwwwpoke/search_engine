@@ -1,95 +1,117 @@
-// backend/server.js
 import express from "express";
 import mongoose from "mongoose";
 import fetch from "node-fetch";
-import * as cheerio from "cheerio";
+import cheerio from "cheerio";
 import cors from "cors";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
-const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/search_engine";
-mongoose
-  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/searchengine";
+
+mongoose.connect(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => console.log("MongoDB connected"))
-  .catch((err) => {
-    console.error("MongoDB connection error:", err.message);
-    process.exit(1);
-  });
+  .catch(err => console.error("MongoDB connection error:", err));
 
-// Schema
-const siteSchema = new mongoose.Schema({
-  url: String,
+const pageSchema = new mongoose.Schema({
+  url: { type: String, unique: true },
   title: String,
+  description: String,
   backlinks: { type: Number, default: 0 },
+  lastCrawled: Date,
 });
-const Site = mongoose.model("Site", siteSchema);
+const Page = mongoose.model("Page", pageSchema);
 
-// Crawl function
-async function crawl(url, depth = 1, maxDepth = 2, visited = new Set()) {
-  if (visited.has(url) || depth > maxDepth) return;
+async function savePageData(url, title, description, backlinks) {
+  try {
+    await Page.findOneAndUpdate(
+      { url },
+      { title, description, backlinks, lastCrawled: new Date() },
+      { upsert: true, new: true }
+    );
+    console.log(`Saved: ${url}`);
+  } catch (err) {
+    console.error("Save error:", err.message);
+  }
+}
+
+async function crawlSite(url, depth = 1, visited = new Set()) {
+  if (visited.has(url) || depth > 2) return; // limit recursion depth
   visited.add(url);
 
+  console.log(`Crawling: ${url}`);
   try {
     const res = await fetch(url, { timeout: 10000 });
-    if (!res.ok) return;
     const html = await res.text();
     const $ = cheerio.load(html);
 
     const title = $("title").text() || url;
-    let site = await Site.findOne({ url });
-    if (!site) {
-      site = new Site({ url, title, backlinks: 0 });
-    }
-    await site.save();
-
+    const description = $('meta[name="description"]').attr("content") || "";
     const links = $("a[href]")
-      .map((_, a) => new URL($(a).attr("href"), url).href)
-      .get();
+      .map((_, a) => $(a).attr("href"))
+      .get()
+      .filter(href => href.startsWith("http"));
 
-    for (let link of links) {
-      if (!visited.has(link)) {
-        // increment backlink count for linked pages
-        await Site.findOneAndUpdate(
-          { url: link },
-          { $inc: { backlinks: 1 } },
-          { upsert: true }
-        );
-        await crawl(link, depth + 1, maxDepth, visited);
-      }
+    // Save page
+    await savePageData(url, title, description, links.length);
+
+    // Crawl internal links (basic recursion)
+    for (const link of links.slice(0, 5)) { // limit to 5 links per page
+      await crawlSite(link, depth + 1, visited);
     }
   } catch (err) {
-    console.error("Crawl error for", url, ":", err.message);
+    console.error(`Crawl failed for ${url}:`, err.message);
   }
 }
 
-// API routes
-app.get("/", (req, res) => {
-  res.send("✅ Search Engine API is running");
-});
+const popularSites = [
+  "https://developer.mozilla.org",
+  "https://www.w3schools.com"
+];
 
+async function startCrawl() {
+  console.log("Starting crawl...");
+  for (const site of popularSites) {
+    await crawlSite(site);
+  }
+  console.log("Crawl finished!");
+}
+startCrawl();
+
+
+// Search endpoint (partial text match)
 app.get("/search", async (req, res) => {
-  const query = req.query.q;
-  if (!query) return res.json([]);
+  const q = req.query.q;
+  if (!q) return res.json([]);
 
-  const regex = new RegExp(query, "i");
-  const results = await Site.find({
-    $or: [{ title: regex }, { url: regex }],
-  }).sort({ backlinks: -1 });
+  try {
+    const results = await Page.find({
+      $or: [
+        { title: new RegExp(q, "i") },
+        { description: new RegExp(q, "i") },
+        { url: new RegExp(q, "i") },
+      ],
+    }).sort({ backlinks: -1 }).limit(20);
 
-  res.json(results);
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ error: "Search failed" });
+  }
 });
 
-app.post("/crawl", async (req, res) => {
-  const { url } = req.body;
-  if (!url) return res.status(400).json({ error: "URL required" });
-
-  crawl(url).then(() => console.log("Crawl finished for", url));
-  res.json({ message: `Crawling started for ${url}` });
+// Top results endpoint
+app.get("/top", async (req, res) => {
+  try {
+    const results = await Page.find().sort({ backlinks: -1 }).limit(10);
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch top results" });
+  }
 });
 
-// Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
