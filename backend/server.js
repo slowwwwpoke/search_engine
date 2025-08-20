@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import fetch from "node-fetch";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 import cors from "cors";
 
 const app = express();
