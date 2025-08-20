@@ -1,0 +1,22 @@
+:root {
+  --bg:#0d1117;
+  --text:#c9d1d9;
+  --accent:#58a6ff;
+  --card:#161b22;
+  --border:#30363d;
+}
+body{background:var(--bg);color:var(--text);font-family:sans-serif;padding:20px;}
+.container{max-width:800px;margin:auto;}
+h1{text-align:center;}
+form{position:relative;display:flex;gap:8px;margin-bottom:10px;}
+input,select,button{padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);}
+button{cursor:pointer;background:var(--accent);border:none;color:#041322;}
+.result{padding:10px;border-bottom:1px solid var(--border);}
+.result a.title{font-weight:bold;color:var(--accent);text-decoration:none;}
+.result .snippet{margin-top:4px;}
+mark{background:yellow;color:black;}
+#pagination button{margin:0 2px;padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;}
+#pagination button.active{background:var(--accent);color:#041322;}
+.suggestions{position:absolute;background:var(--card);border:1px solid var(--border);border-radius:12px;width:calc(100% - 32px);max-height:200px;overflow-y:auto;margin-top:4px;z-index:1000;}
+.suggestions div{padding:8px 12px;cursor:pointer;}
+.suggestions div:hover{background:var(--accent);color:#041322;}
