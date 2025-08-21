@@ -1,10 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import sanitizeHtml from "sanitize-html";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/test";
 
 // Middleware
@@ -15,7 +15,7 @@ app.use(express.json());
 const pageSchema = new mongoose.Schema({
   url: String,
   title: String,
-  description: String,
+  description: String, // may contain HTML
   backlinks: { type: Number, default: 0 },
   lastCrawled: Date,
 });
@@ -28,7 +28,6 @@ app.get("/search", async (req, res) => {
   try {
     const query = req.query.q || "";
 
-    // Search in title + description + URL (case-insensitive)
     const results = await Page.find({
       $or: [
         { title: { $regex: query, $options: "i" } },
@@ -36,11 +35,25 @@ app.get("/search", async (req, res) => {
         { url: { $regex: query, $options: "i" } },
       ],
     })
-      .sort({ backlinks: -1 }) // rank by backlinks
-      .limit(10);
+      .sort({ backlinks: -1 })
+      .limit(10)
+      .lean();
 
-    console.log("Search results for:", query, results.length);
-    res.json(results);
+    // Sanitize HTML snippets before sending to frontend
+    const sanitizedResults = results.map((item) => ({
+      ...item,
+      description: item.description
+        ? sanitizeHtml(item.description, {
+            allowedTags: ["b", "i", "em", "strong", "a", "p", "ul", "ol", "li", "br"],
+            allowedAttributes: {
+              a: ["href", "title", "target"],
+            },
+          })
+        : "",
+    }));
+
+    console.log("Search results for:", query, sanitizedResults.length);
+    res.json(sanitizedResults);
   } catch (err) {
     console.error("Error in /search:", err);
     res.status(500).json({ error: "Search failed", details: err.message });

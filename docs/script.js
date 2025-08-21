@@ -1,4 +1,4 @@
-const API_URL = "https://slowwwwpoke.github.io/search_engine/";
+const API_URL = "https://slowwwwpoke.github.io/search_engine"; 
 
 async function search() {
   const query = document.getElementById("query").value.trim();
@@ -9,7 +9,7 @@ async function search() {
     return;
   }
 
-  resultsDiv.innerHTML = "<p>🔎 Searching...</p>";
+  resultsDiv.innerHTML = "<p> Searching...</p>";
 
   try {
     const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
@@ -33,9 +33,11 @@ async function search() {
       .map(
         (item) => `
         <div class="result">
-          <h3><a href="${item.url}" target="_blank">${item.title || item.url}</a></h3>
-          <p>${item.description || "No description available."}</p>
-          <p class="backlinks">🔗 Backlinks: ${item.backlinks || 0}</p>
+          <h3>
+            <a href="${item.url}" target="_blank">${item.title || item.url}</a>
+          </h3>
+          <div class="snippet">${item.description || "No description available."}</div>
+          <p class="backlinks">Backlinks: ${item.backlinks || 0}</p>
           <small>${item.url}</small>
         </div>
       `

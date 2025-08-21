@@ -1,17 +1,31 @@
-const API_URL = "https://slowwwwpoke.github.io/search_engine/";
+const API_URL = "https://slowwwwpoke.github.io/search_engine"; 
 
 async function search() {
   const query = document.getElementById("query").value.trim();
   const resultsDiv = document.getElementById("results");
 
-  resultsDiv.innerHTML = "<p>Searching...</p>";
+  if (!query) {
+    resultsDiv.innerHTML = "<p style='color:red;'>Please enter a search term.</p>";
+    return;
+  }
+
+  resultsDiv.innerHTML = "<p> Searching...</p>";
 
   try {
     const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+
+    const contentType = res.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      const text = await res.text();
+      console.error("Non-JSON response:", text);
+      resultsDiv.innerHTML = `<p style="color:red;">Server returned non-JSON data</p>`;
+      return;
+    }
+
     const data = await res.json();
 
-    if (data.length === 0) {
-      resultsDiv.innerHTML = "<p>No results found.</p>";
+    if (!Array.isArray(data) || data.length === 0) {
+      resultsDiv.innerHTML = `<p>No results found for "<strong>${query}</strong>".</p>`;
       return;
     }
 
@@ -19,14 +33,18 @@ async function search() {
       .map(
         (item) => `
         <div class="result">
-          <a href="${item.url}" target="_blank">${item.title || item.url}</a>
-          <p class="backlinks">🔗 Backlinks: ${item.backlinks}</p>
-          <p>${item.url}</p>
+          <h3>
+            <a href="${item.url}" target="_blank">${item.title || item.url}</a>
+          </h3>
+          <div class="snippet">${item.description || "No description available."}</div>
+          <p class="backlinks">Backlinks: ${item.backlinks || 0}</p>
+          <small>${item.url}</small>
         </div>
       `
       )
       .join("");
   } catch (err) {
+    console.error("Fetch error:", err);
     resultsDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
   }
 }
