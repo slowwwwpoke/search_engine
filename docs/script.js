@@ -1,4 +1,4 @@
-const API_URL = "https://search-engine-gc3w.onrender.com"; 
+const API_URL = "https://your-app-name.onrender.com"; // Render backend
 
 async function search() {
   const query = document.getElementById("query").value.trim();
@@ -9,19 +9,10 @@ async function search() {
     return;
   }
 
-  resultsDiv.innerHTML = "<p> Searching...</p>";
+  resultsDiv.innerHTML = "<p>Searching...</p>";
 
   try {
     const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
-
-    const contentType = res.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) {
-      const text = await res.text();
-      console.error("Non-JSON response:", text);
-      resultsDiv.innerHTML = `<p style="color:red;">Server returned non-JSON data</p>`;
-      return;
-    }
-
     const data = await res.json();
 
     if (!Array.isArray(data) || data.length === 0) {
@@ -33,10 +24,8 @@ async function search() {
       .map(
         (item) => `
         <div class="result">
-          <h3>
-            <a href="${item.url}" target="_blank">${item.title || item.url}</a>
-          </h3>
-          <div class="snippet">${item.description || "No description available."}</div>
+          <h3><a href="${item.url}" target="_blank">${item.title || item.url}</a></h3>
+          <p>${item.description || "No description available."}</p>
           <p class="backlinks">Backlinks: ${item.backlinks || 0}</p>
           <small>${item.url}</small>
         </div>
