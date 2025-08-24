@@ -1,4 +1,4 @@
-const API_URL = "https://slowwwwpoke.github.io/search_engine"; 
+const API_URL = "https://https://search-engine-gc3w.onrender.com"; 
 
 async function search() {
   const query = document.getElementById("query").value.trim();

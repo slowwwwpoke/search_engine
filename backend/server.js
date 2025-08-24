@@ -6,7 +6,6 @@ import * as cheerio from "cheerio";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/test";
 
 // Seed URL to crawl when the server starts
 const SEED_URL = process.env.SEED_URL || "https://example.com";
